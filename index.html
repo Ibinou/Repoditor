@@ -50,7 +50,7 @@ function renderAppList(repo) {
             <h3>${app.name}</h3>
             <p>Bundle ID: ${app.bundleIdentifier}</p>
             <p>Version: ${app.versions[0].version}</p>
-            <button onclick="editApp(${index})">Edit</button>
+            <button onclick="editApp(${index})">Edit App</button>
         `;
         appListDiv.appendChild(appDiv);
     });
@@ -58,11 +58,19 @@ function renderAppList(repo) {
     const copyButton = document.createElement("button");
     copyButton.textContent = "Copy Updated JSON";
     copyButton.onclick = copyUpdatedJson;
+    
+    const editSourceButton = document.createElement("button");
+    editSourceButton.textContent = "Edit Source";
+    editSourceButton.onclick = editSource;
+    
+    appListDiv.appendChild(editSourceButton);
     appListDiv.appendChild(copyButton);
 }
 
 function editApp(index) {
     const app = repo.apps[index];
+
+    // Prompt for modifying app information
     const newName = prompt("Enter new name", app.name);
     const newBundleId = prompt("Enter new Bundle ID", app.bundleIdentifier);
     const newVersion = prompt("Enter new version", app.versions[0].version);
@@ -73,6 +81,30 @@ function editApp(index) {
             bundleIdentifier: newBundleId,
             versions: [{ version: newVersion }]
         };
+
+        saveRepo(repo);
+        renderAppList(repo);
+    }
+}
+
+function editSource() {
+    // Prompt for modifying source information
+    const newName = prompt("Enter new source name", repo.name);
+    const newSubtitle = prompt("Enter new source subtitle", repo.subtitle);
+    const newDescription = prompt("Enter new source description", repo.description);
+    const newIconURL = prompt("Enter new source icon URL", repo.iconURL);
+    const newHeaderURL = prompt("Enter new source header URL", repo.headerURL);
+    const newWebsite = prompt("Enter new source website", repo.website);
+    const newTintColor = prompt("Enter new source tint color", repo.tintColor);
+
+    if (newName && newSubtitle && newDescription && newIconURL && newHeaderURL && newWebsite && newTintColor) {
+        repo.name = newName;
+        repo.subtitle = newSubtitle;
+        repo.description = newDescription;
+        repo.iconURL = newIconURL;
+        repo.headerURL = newHeaderURL;
+        repo.website = newWebsite;
+        repo.tintColor = newTintColor;
 
         saveRepo(repo);
         renderAppList(repo);
