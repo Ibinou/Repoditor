@@ -96,8 +96,9 @@ function editSource() {
     const newHeaderURL = prompt("Enter new source header URL", repo.headerURL);
     const newWebsite = prompt("Enter new source website", repo.website);
     const newTintColor = prompt("Enter new source tint color", repo.tintColor);
+    const newSourceURL = prompt("Enter new source URL", repo.sourceURL);
 
-    if (newName && newSubtitle && newDescription && newIconURL && newHeaderURL && newWebsite && newTintColor) {
+    if (newName && newSubtitle && newDescription && newIconURL && newHeaderURL && newWebsite && newTintColor && newSourceURL) {
         repo.name = newName;
         repo.subtitle = newSubtitle;
         repo.description = newDescription;
@@ -105,6 +106,7 @@ function editSource() {
         repo.headerURL = newHeaderURL;
         repo.website = newWebsite;
         repo.tintColor = newTintColor;
+        repo.sourceURL = newSourceURL;
 
         saveRepo(repo);
         renderAppList(repo);
