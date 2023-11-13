@@ -44,25 +44,27 @@ function renderAppList(repo) {
     const appListDiv = document.getElementById("app-list");
     appListDiv.innerHTML = ""; // Clear previous content
 
-    repo.apps.forEach((app, index) => {
-        const appDiv = document.createElement("div");
-        appDiv.innerHTML = `
-            <h3>${app.name}</h3>
-            <p>Bundle ID: ${app.bundleIdentifier}</p>
-            <p>Version: ${app.versions[0].version}</p>
-            <button onclick="editApp(${index})">Edit App</button>
-        `;
-        appListDiv.appendChild(appDiv);
-    });
+    if (repo.apps && Array.isArray(repo.apps)) {
+        repo.apps.forEach((app, index) => {
+            const appDiv = document.createElement("div");
+            appDiv.innerHTML = `
+                <h3>${app.name}</h3>
+                <p>Bundle ID: ${app.bundleIdentifier || "N/A"}</p>
+                <p>Version: ${app.versions && app.versions.length ? app.versions[0].version : "N/A"}</p>
+                <button onclick="editApp(${index})">Edit App</button>
+            `;
+            appListDiv.appendChild(appDiv);
+        });
+    }
 
     const copyButton = document.createElement("button");
     copyButton.textContent = "Copy Updated JSON";
     copyButton.onclick = copyUpdatedJson;
-    
+
     const editSourceButton = document.createElement("button");
     editSourceButton.textContent = "Edit Source";
     editSourceButton.onclick = editSource;
-    
+
     appListDiv.appendChild(editSourceButton);
     appListDiv.appendChild(copyButton);
 }
@@ -73,13 +75,13 @@ function editApp(index) {
     // Prompt for modifying app information
     const newName = prompt("Enter new name", app.name);
     const newBundleId = prompt("Enter new Bundle ID", app.bundleIdentifier);
-    const newVersion = prompt("Enter new version", app.versions[0].version);
+    const newVersion = prompt("Enter new version", app.versions && app.versions.length ? app.versions[0].version : "");
 
-    if (newName && newBundleId && newVersion) {
+    if (newName) {
         repo.apps[index] = {
             name: newName,
-            bundleIdentifier: newBundleId,
-            versions: [{ version: newVersion }]
+            bundleIdentifier: newBundleId || app.bundleIdentifier,
+            versions: [{ version: newVersion || (app.versions && app.versions.length ? app.versions[0].version : "") }]
         };
 
         saveRepo(repo);
@@ -98,15 +100,15 @@ function editSource() {
     const newTintColor = prompt("Enter new source tint color", repo.tintColor);
     const newSourceURL = prompt("Enter new source URL", repo.sourceURL);
 
-    if (newName && newSubtitle && newDescription && newIconURL && newHeaderURL && newWebsite && newTintColor && newSourceURL) {
+    if (newName) {
         repo.name = newName;
-        repo.subtitle = newSubtitle;
-        repo.description = newDescription;
-        repo.iconURL = newIconURL;
-        repo.headerURL = newHeaderURL;
-        repo.website = newWebsite;
-        repo.tintColor = newTintColor;
-        repo.sourceURL = newSourceURL;
+        repo.subtitle = newSubtitle || repo.subtitle;
+        repo.description = newDescription || repo.description;
+        repo.iconURL = newIconURL || repo.iconURL;
+        repo.headerURL = newHeaderURL || repo.headerURL;
+        repo.website = newWebsite || repo.website;
+        repo.tintColor = newTintColor || repo.tintColor;
+        repo.sourceURL = newSourceURL || repo.sourceURL;
 
         saveRepo(repo);
         renderAppList(repo);
