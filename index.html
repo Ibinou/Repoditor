@@ -7,13 +7,27 @@
     <title>AltStore Repo Manager</title>
 </head>
 <body>
+    <header>
+        <h1>AltStore Repo Manager</h1>
+        <p>Manage your AltStore repo/source in a friendly and fast way.</p>
+    </header>
+    
     <div id="json-input-container">
         <textarea id="json-input" placeholder="Paste AltStore JSON code here..."></textarea>
         <button onclick="parseAltStoreJson()">Submit</button>
     </div>
     <div id="app-list"></div>
+    
     <script>
-      let repo;
+let repo;
+
+document.addEventListener("DOMContentLoaded", function () {
+    clearAltStoreRepo();
+});
+
+function clearAltStoreRepo() {
+    localStorage.removeItem("altstoreRepo");
+}
 
 function parseAltStoreJson() {
     const jsonInput = document.getElementById("json-input").value;
@@ -41,7 +55,6 @@ function renderAppList(repo) {
         appListDiv.appendChild(appDiv);
     });
 
-    // Ajout du bouton pour copier le code JSON mis à jour
     const copyButton = document.createElement("button");
     copyButton.textContent = "Copy Updated JSON";
     copyButton.onclick = copyUpdatedJson;
