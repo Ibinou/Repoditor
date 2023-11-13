@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>AltStore Repo Manager</title>
+</head>
+<body>
+    <div id="json-input-container">
+        <textarea id="json-input" placeholder="Paste AltStore JSON code here..."></textarea>
+        <button onclick="parseAltStoreJson()">Submit</button>
+    </div>
+    <div id="app-list"></div>
+    <script>
+      let repo;
+
+function parseAltStoreJson() {
+    const jsonInput = document.getElementById("json-input").value;
+
+    try {
+        repo = JSON.parse(jsonInput);
+        renderAppList(repo);
+    } catch (error) {
+        alert("Invalid JSON. Please check your input.");
+    }
+}
+
+function renderAppList(repo) {
+    const appListDiv = document.getElementById("app-list");
+    appListDiv.innerHTML = ""; // Clear previous content
+
+    repo.apps.forEach((app, index) => {
+        const appDiv = document.createElement("div");
+        appDiv.innerHTML = `
+            <h3>${app.name}</h3>
+            <p>Bundle ID: ${app.bundleIdentifier}</p>
+            <p>Version: ${app.versions[0].version}</p>
+            <button onclick="editApp(${index})">Edit</button>
+        `;
+        appListDiv.appendChild(appDiv);
+    });
+
+    // Ajout du bouton pour copier le code JSON mis à jour
+    const copyButton = document.createElement("button");
+    copyButton.textContent = "Copy Updated JSON";
+    copyButton.onclick = copyUpdatedJson;
+    appListDiv.appendChild(copyButton);
+}
+
+function editApp(index) {
+    const app = repo.apps[index];
+    const newName = prompt("Enter new name", app.name);
+    const newBundleId = prompt("Enter new Bundle ID", app.bundleIdentifier);
+    const newVersion = prompt("Enter new version", app.versions[0].version);
+
+    if (newName && newBundleId && newVersion) {
+        repo.apps[index] = {
+            name: newName,
+            bundleIdentifier: newBundleId,
+            versions: [{ version: newVersion }]
+        };
+
+        saveRepo(repo);
+        renderAppList(repo);
+    }
+}
+
+function saveRepo(repo) {
+    localStorage.setItem("altstoreRepo", JSON.stringify(repo));
+}
+
+function copyUpdatedJson() {
+    const updatedJson = JSON.stringify(repo, null, 2);
+    copyToClipboard(updatedJson);
+    alert("Updated JSON copied to clipboard!");
+}
+
+function copyToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+}
+    </script>
+</body>
+</html>
